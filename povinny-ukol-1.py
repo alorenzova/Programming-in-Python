@@ -163,21 +163,9 @@ domu) a commercial (pravdivostní hodnota, která určuje, zda se jedná o nemov
 používanou k podnikání). 
 """
 
-class Residence(Property):
-    def __init__(self, locality: Locality, area: float, commercial: bool):
-        super().__init__(locality)
-        self.area = area
-        self.commercial = commercial
-    def __str__(self) -> str: #str?
-        if self.commercial:
-            use = "Komerční/k podnikání"
-        else:
-            use = "Obytné"
-        return (f"Stavba s atributy:" # zjistit, jak rozdelit na radky
-                f" lokalita: {self.locality.name} (koeficient {self.locality.locality_coefficient}),"
-                f" podlahová plocha: {self.area} m²,"
-                f" využití: {use}.")
+# kod nize, pridan k nemu krok 6)
 
+"""
 #### Nemovitosti  
 locality_prague = Locality("Praha", 2.8)
 
@@ -195,6 +183,7 @@ my_office = Residence(
 
 print(my_flat)
 print(my_office)
+"""
 
 ### 6) Třída Residence - metoda calculate_tax()
 """
@@ -208,6 +197,52 @@ Příklad výpočtu: Uvažujme tedy například byt (určený k bydlení) o plo�
 Pokud by stejný byt byl používán k podnikání, daň by byla 60 * 3 * 15 * 2 = 5400.
 """
 
+class Residence(Property):
+    BASE_TAX_RATE = 15
+    def __init__(self, locality: Locality, area: float, commercial: bool):
+        super().__init__(locality)
+        self.area = area
+        self.commercial = commercial
+    def calculate_tax(self) -> float:
+        base_tax = (
+            self.area 
+            * self.locality.locality_coefficient 
+            * self.BASE_TAX_RATE
+        )
+        final_tax = base_tax
+        if self.commercial:
+            final_tax *= 2
+        return final_tax
+    def __str__(self) -> str: #str?
+        if self.commercial:
+            use = "Komerční/k podnikání"
+        else:
+            use = "Obytné"
+        return (f"Stavba s atributy:" # zjistit, jak rozdelit na radky
+                f" lokalita: {self.locality.name} (koeficient {self.locality.locality_coefficient}),"
+                f" podlahová plocha: {self.area} m²,"
+                f" využití: {use}.")
+
+#### Výpočet daně
+
+locality_test = Locality("testovaci", 3.0)
+area_test = 60.0
+
+flat_residence = Residence(locality_test, area_test, commercial=False)
+tax_residence = flat_residence.calculate_tax()
+
+print(f"Byt ({area_test} m²):")
+print(f" výpočet: {area_test} * {locality_test.locality_coefficient} * {Residence.BASE_TAX_RATE} = 2700,")
+print(f" vypočtená daň: **{tax_residence}** Kč,")
+print(f" test: {'passed' if tax_residence == 2700.0 else 'failed'}")
+
+
+office_residence = Residence(locality_test, area_test, commercial=True)
+tax_commercial = office_residence.calculate_tax()
+print(f"Komerční nemovitost ({area_test} m²):")
+print(f" výpočet: 2700 * 2 = 5400,")
+print(f" vypočtená daň: **{tax_commercial}** Kč,")
+print(f" test: {'passed' if tax_commercial == 5400.0 else 'failed'}")
 
 ### 7) Zkoušky výpočtů
 """
