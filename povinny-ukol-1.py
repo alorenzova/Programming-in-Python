@@ -138,6 +138,7 @@ class Estate(Property):
 # bez importu ceil problem, napsat jinak?
 # co kdyz se jako input zada blbost?
 
+"""
 #### Vypocty
 loc1 = Locality("Praha", 2.8)
 loc2 = Locality("Brno", 1.1)
@@ -152,6 +153,7 @@ print("Daň estate1:", estate1.calculate_tax())
 print("Daň estate2:", estate2.calculate_tax())
 print("Daň estate3:", estate3.calculate_tax())
 print("Daň estate4:", estate4.calculate_tax())
+"""
 
 # vyzkouset nesmysly, dlouhe cislo apod.
 
@@ -223,8 +225,8 @@ class Residence(Property):
                 f" podlahová plocha: {self.area} m²,"
                 f" využití: {use}.")
 
+"""
 #### Výpočet daně
-
 locality_test = Locality("testovaci", 3.0)
 area_test = 60.0
 
@@ -243,6 +245,7 @@ print(f"Komerční nemovitost ({area_test} m²):")
 print(f" výpočet: 2700 * 2 = 5400,")
 print(f" vypočtená daň: **{tax_commercial}** Kč,")
 print(f" test: {'passed' if tax_commercial == 5400.0 else 'failed'}")
+"""
 
 ### 7) Zkoušky výpočtů
 """
@@ -255,11 +258,45 @@ Vyzkoušej svůj program pomocí následujících nemovitostí:
 s koeficientem 0.8. Daň z této nemovitosti je 900 * 0.85 * 0.8 = 612.
 """
 
+print("A) Zemědělský pozemek:")
+
+AREA = 900
+locality_manetin = Locality("Manětín", 0.8)
+land_manetin = Estate(locality_manetin, "land", AREA)
+
+EXPECTED_TAX = 612
+calculated_tax = land_manetin.calculate_tax()
+
+print(f"Plocha: {AREA} m²")
+print(f"Vzoreček: {AREA} * 0.85 * 0.8 = {AREA * 0.85 * 0.8}")
+print(f"Vypočtená daň: {calculated_tax} Kč")
+print("Výsledek:", "passed" 
+      if calculated_tax == EXPECTED_TAX 
+      else "failed"
+      )
+
 #### B) Dům
 """
 - Dům s podlahovou plochou 120 metrů čtverečních v lokalitě Manětín 
 s koeficientem 0.8. Daň z této nemovitosti je 120 * 0.8 * 15 = 1440.
 """
+
+print("B) Dům:")
+
+AREA = 120
+locality_manetin = Locality("Manětín", 0.8)
+house_manetin = Residence(locality_manetin, AREA, commercial=False)
+
+EXPECTED_TAX = 1440
+calculated_tax = house_manetin.calculate_tax()
+
+print(f"Plocha: {AREA} m²")
+print(f"Vzoreček: {AREA} * 0.8 * 15 = {AREA * 0.8 * 15}")
+print(f"Vypočtená daň: {calculated_tax} Kč")
+print("Výsledek:", "passed" 
+      if calculated_tax == EXPECTED_TAX 
+      else "failed"
+      )
 
 #### C) Kancelář
 """
@@ -267,6 +304,23 @@ s koeficientem 0.8. Daň z této nemovitosti je 120 * 0.8 * 15 = 1440.
 čtverečních v lokalitě Brno s koeficientem 3. Daň z této nemovitosti 
 je 90 * 3 * 15 * 2 = 8100.
 """
+
+print("C) Kancelář:")
+
+AREA = 90
+locality_brno = Locality("Brno", 3)
+office_brno = Residence(locality_brno, AREA, commercial=True)
+
+EXPECTED_TAX = 8100
+calculated_tax = office_brno.calculate_tax()
+
+print(f"Plocha: {AREA} m²")
+print(f"Vzoreček: {AREA} * 3 * 15 * 2 = {AREA * 3 * 15 * 2}")
+print(f"Vypočtená daň: {calculated_tax} Kč")
+print("Výsledek:", "passed" 
+      if calculated_tax == EXPECTED_TAX 
+      else "failed"
+      )
 
 ## Bonusy
 """
