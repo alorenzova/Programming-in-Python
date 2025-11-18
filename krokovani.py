@@ -128,3 +128,55 @@ except Exception:
     print("Nastala chyba")
 
 ### Knizni serie (bonus)
+knihy = {
+    "1984": 328, # jen jedno číslo (počet stran knihy)
+    "Pán Prstenů": [423, 352, 416],  # seznam knih v sérii
+    "Hornblower": [256, 352, 288, 304],
+    "Problém tří těles": [400, 512, 608]
+}
+
+nazev = input("Zadej název knižní série: ")
+stranek_za_den = int(input("Kolik stran přečteš každý den? "))
+stranek_celkem = sum(knihy[nazev]) ### Funkce sum() v Pythonu sečítá všechny prvky v nějakém iterovatelném objektu – typicky v seznamu
+
+pocet_dni = stranek_celkem / stranek_za_den
+pocet_dni = round(pocet_dni)
+print(f"Celou sérii přečteš za {pocet_dni} dní.")
+
+
+#oprava
+
+knihy = {
+    "1984": 328,
+    "Pán Prstenů": [423, 352, 416],
+    "Hornblower": [256, 352, 288, 304],
+    "Problém tří těles": [400, 512, 608]
+}
+
+try:
+    nazev = input("Zadej název knižní série: ")
+    stranek_za_den = int(input("Kolik stran přečteš každý den? "))
+
+    if stranek_za_den <= 0:
+        raise ValueError("Počet stran na den musí být větší než 0.")
+
+    hodnota = knihy[nazev]
+
+    if isinstance(hodnota, int):
+        stranek_celkem = hodnota
+    else:
+        stranek_celkem = sum(hodnota)
+
+    pocet_dni = stranek_celkem / stranek_za_den
+    pocet_dni = round(pocet_dni)
+
+    print(f"Celou sérii přečteš za {pocet_dni} dní.")
+
+except KeyError:
+    print("Tuto knihu nebo sérii neznáme.")
+
+except ValueError as e:
+    print("Chyba ve vstupu:", e)
+
+except Exception as e:
+    print("Nastala neočekávaná chyba:", e)
