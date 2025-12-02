@@ -1,0 +1,16 @@
+[
+    {
+        "jmeno": "Petr",
+        "prijmeni": "Roman",
+        "rok": 2017,
+        "dochazka": 0.95,
+        "vyznamenani": true
+    },
+    {
+        "jmeno": "Jana",
+        "prijmeni": "Kočanská",
+        "rok": 2015,
+        "dochazka": 0.92,
+        "vyznamenani": true
+    }
+]
