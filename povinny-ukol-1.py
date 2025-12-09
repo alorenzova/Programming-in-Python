@@ -7,6 +7,10 @@ bytové a komerční prostory. Výše daně se odvíjí od několika faktorů, n
 nemovitosti, velikosti, lokalitě, kde se nemovitost nachází atd.
 """
 # from pydantic import BaseModel, PositiveInt, field_validator --> ma smysl?
+## feedback
+"""
+nemá, zadání vyžaduje procvičit principy OOP (třídy, dědičnost) na čistém Pythonu, takže je v tomto případě lepší zůstat u standardních tříd (přesně tak, jak jsi to udělala). Ale chválím tě za to, že o existenci knihovny Pydantic víš :)
+"""
 
 ### 1) Třída Locality s atributy name a locality_coefficient
 """
@@ -26,6 +30,21 @@ class Locality:
     #def get_locality_info_(self) -> str:
         #return f"Lokalita: {self.name}, místní koeficient: {self.locality_coefficient}"
         # !!! tato cast nefunguje, smazat
+
+## feedback
+"""
+Tvá metoda get_localityinfo ve skutečnosti fungovala, ale byla "manuální". Aby ti vypsala text, musela bys ji zavolat výslovně. Oproti tomu magická metoda str funguje jako "automat".
+
+Tady je rozdíl v použití:
+
+# Varianta 1: Tvá "nefunkční" metoda (Manuální režim)
+# Aby to fungovalo, musela bys to zapsat takto:
+print(praha.get_locality_info_())  # Musíš ji zavolat, tedy včetně závorek ()
+
+# Varianta 2: Metoda __str__ (Automatický režim)
+# Python tuto metodu hledá a použije sám, jakmile chceš vypsat objekt:
+print(praha)
+"""
 
 """
 #### Praha, Brno
@@ -60,6 +79,13 @@ class Property:
 
     #def __str__(self) -> str:
         #return f"Nemovitost o velikosti {self.size} m² se nachází v lokalitě {self.locality.name}"
+
+## feedback
+"""
+self.size = size --> uvest navic i m², aby to davalo vetsi smysl? --> bude nize
+
+Pokládáš velmi trefné otázky pro začátečníka, super! Naprosto s tebou souhlasím – ačkoliv jde o podobná čísla, je logicky správnější definovat je až v konkrétních třídách, přesně tak, jak jsi to udělala (použitím proměnné area)
+"""
 
 """
 #### Dům, byt
@@ -131,12 +157,42 @@ class Estate(Property):
             self.estate_coefficients[self.estate_type] *
             self.locality.locality_coefficient
         )
-    def __str__(self) -> str:
-        return (f"Pozemek typu {self.estate_type} o rozloze {self.area} m² "
-                f"v lokalitě s názvem {self.locality.name}.")
+    #def __str__(self) -> str:
+        #return (f"Pozemek typu {self.estate_type} o rozloze {self.area} m² "
+               # f"v lokalitě s názvem {self.locality.name}.")
+    def __str__(self) -> str: # BONUS A)
+        tax = self.calculate_tax()
+        return (f"Pozemek typu {self.estate_type}, lokalita: {self.locality.name} "
+            f"(koeficient {self.locality.locality_coefficient}), "
+            f"plocha: {self.area} m², daň: {tax} Kč.")
 
+## feedback
+"""
+kam se pise *, kdyz nechci vse na jednom radku?
+
+Podle PEP 8 se operátor píše na začátek nového řádku. Je to považováno za čitelnější (podobně jako když počítáš pod sebou v matematice)
+
+def calculate_tax(self) -> int:
+    return ceil(
+        self.area 
+        * self.estate_coefficients[self.estate_type] 
+        * self.locality.locality_coefficient
+    )
+"""
 # bez importu ceil problem, napsat jinak?
+## feedback
+"""
+Ano, bez importu funkce ceil (zaokrouhlení nahoru) by program vyhodil chybu NameError, protože to není vestavěná funkce Pythonu, ale je součástí modulu math. Teď to máš naimportované správně.
+"""
+
 # co kdyz se jako input zada blbost?
+## feedback
+"""
+Skvělá otázka! Moc ti doporučuji přečíst si o Enum, to ti přesně pomůže s řešením a validací vstupních dat. :)
+
+--> https://docs.python.org/3/library/enum.html
+"""
+
 
 """
 #### Vypocty
@@ -215,15 +271,32 @@ class Residence(Property):
         if self.commercial:
             final_tax *= 2
         return final_tax
-    def __str__(self) -> str: #str?
-        if self.commercial:
-            use = "Komerční/k podnikání"
-        else:
-            use = "Obytné"
-        return (f"Stavba s atributy:" # zjistit, jak rozdelit na radky
-                f" lokalita: {self.locality.name} (koeficient {self.locality.locality_coefficient}),"
-                f" podlahová plocha: {self.area} m²,"
-                f" využití: {use}.")
+    #def __str__(self) -> str: #str?
+        #if self.commercial:
+         #   use = "Komerční/k podnikání"
+        #else:
+         #   use = "Obytné"
+        #return (f"Stavba s atributy:" # zjistit, jak rozdelit na radky
+               # f" lokalita: {self.locality.name} (koeficient {self.locality.locality_coefficient}),"
+                #f" podlahová plocha: {self.area} m²,"
+                #f" využití: {use}.")
+    def __str__(self) -> str: # BONUS A)
+        use = "Komerční/k podnikání" if self.commercial else "Obytné"
+        tax = self.calculate_tax()
+        return (f"Stavba, lokalita: {self.locality.name} (koeficient {self.locality.locality_coefficient}), "
+            f"plocha: {self.area} m², využití: {use}, daň: {tax} Kč.")
+
+## feedback
+"""
+return (f"Stavba s atributy:" # zjistit, jak rozdelit na radky
+"""
+### Doporučuji použít víceřádkové řetězce (tzv. multiline strings). Je to čistší a více "Pythonic" způsob pro dlouhé texty. Trojité uvozovky (""") totiž zachovávají zalomení řádků přesně tak, jak je napíšeš v kódu.
+
+#def __str__(self) -> str:
+#    return f"""Stavba s atributy:
+# lokalita: {self.locality.name} (koeficient {self.locality.locality_coefficient}),
+# podlahová plocha: {self.area} m²,
+# využití: {use}."""
 
 """
 #### Výpočet daně
@@ -328,40 +401,59 @@ Tyto bonusy jsou nepovinné a záleží čistě na tobě, zda se do nich pustí�
 Jednotlivé části jsou nezávislé, můžeš si tedy vybrat libovolné odrážky a ty vyřešit.
 """
 
-### Výpisy informací
+### A) Výpisy informací
 """
 - Ke třídě Estate a Residence přidej výpisy informací do metody __str__(). 
 Např.: Zemědělský pozemek, lokalita Manětín (koeficient 1), 900 metrů čtverečních, 
 daň 765 Kč.
 """
+#### v části 4) a 6)
 
-### Úprava třídy Property
+AREA = 900
+locality_manetin = Locality("Manětín", 1.0)
+land_manetin = Estate(locality_manetin, "land", AREA)
+
+print("A) Zemědělský pozemek:")
+print(land_manetin)
+
+brno_local = Locality(name="Brno", locality_coefficient=2.5)
+kancelar_brno = Residence(
+    locality=brno_local, 
+    area=85.0, 
+    commercial=True
+)
+
+print("A) Komerční rezidence:")
+print(kancelar_brno) 
+print(f"Kontrola: Vypočtená daň je {kancelar_brno.calculate_tax()} Kč.")
+
+### B) Úprava třídy Property
 """
 - Uprav třídu Property na abstraktní třídu. Tato třída totiž nereprezentuje žádnou 
 konkrétní nemovitost, nemovitost totiž musí být pozemek nebo stavba.
 """
 
-### Třída TaxReport
+### C) Třída TaxReport
 """
 - Přidej třídu TaxReport, která bude reprezentovat daňové přiznání. Třída bude mít 
 atributy name (jméno osoby, která přiznání podává) a property_list, což je seznam 
 nemovitostí, které jsou v přiznání uvedeny.
 """
 
-#### Metoda add_property()
+#### D) Metoda add_property()
 """
 Dále přidej metodu add_property(), 
 která bude mít jako parametr objekt (nemovitost, která je součástí přiznání) 
 a vloží ji do seznamu property_list. 
 """
 
-#### Metoda calculate_tax()
+#### E) Metoda calculate_tax()
 """
 Dále přidej metodu calculate_tax(), 
 která vypočte daň ze všech nemovitostí v seznamu property_list.
 """
 
-### Enum třídy
+### F) Enum třídy
 """
 - Podívej se na to, jak fungují tzv. enum třídy. Můžeš si přečíst například tento 
 text (link: https://www.geeksforgeeks.org/enum-in-python/). Zkus vytvořit třídu pro typy pozemků (zemědělský pozemek, stavební pozemek, 
