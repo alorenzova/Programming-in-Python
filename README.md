@@ -157,4 +157,4 @@ data = data.encode("utf-8")
 Tip: Protože v hodnotě `data` jsou složené závorky, namísto formátovaných řetězců je jednodušší spojit řetězec dohromady z jednotlivých částí s využitím +. Alternativně můžeš využít metodu `.dumps()`, která slovník uloží jako řetězec.
 
 ## Řešení 2. domácího úkolu
-Link
+[Link](https://github.com/alorenzova/Programming-in-Python/blob/main/Povinny-ukol-2/povinny-ukol-2.py)
